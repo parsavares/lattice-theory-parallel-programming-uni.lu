@@ -5,7 +5,9 @@ project(absint
     HOMEPAGE_URL "https://github.com/ptal/lattice-theory-parallel-programming-uni.lu"
     LANGUAGES CXX)
 
-# We use cpp-peglib to parse C programs.
+# ------------------------------------------------
+# Fetch cpp-peglib (for parsing C programs)
+# ------------------------------------------------
 include(FetchContent)
 FetchContent_Declare(
     cpp_peglib
@@ -14,18 +16,22 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(cpp_peglib)
 
-# -------------------------------
-# Build the old interpreter (main.cpp)
-# -------------------------------
-add_executable(absint src/main.cpp)
+# ------------------------------------------------
+# Old Interpreter: absint (src/main.cpp)
+# ------------------------------------------------
+add_executable(absint
+    src/main.cpp  # The original interpreter
+)
 target_include_directories(absint PRIVATE include)
 target_compile_features(absint PRIVATE cxx_std_17)
-target_link_libraries(absint cpp_peglib)
+target_link_libraries(absint PRIVATE cpp_peglib)
 
-# -------------------------------
-# Build the new equational form interpreter (main2.cpp)
-# -------------------------------
-add_executable(eq_interpreter src/main2.cpp)
+# ------------------------------------------------
+# New Interpreter: eq_interpreter (src/abstract_fixpoint_interpreter.cpp)
+# ------------------------------------------------
+add_executable(eq_interpreter
+    src/abstract_fixpoint_interpreter.cpp  # Your new file
+)
 target_include_directories(eq_interpreter PRIVATE include)
 target_compile_features(eq_interpreter PRIVATE cxx_std_17)
-target_link_libraries(eq_interpreter cpp_peglib)
+target_link_libraries(eq_interpreter PRIVATE cpp_peglib)
