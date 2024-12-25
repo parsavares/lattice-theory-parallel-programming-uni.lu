@@ -6,10 +6,11 @@
 #include <variant>
 #include <cmath>
 #include <algorithm> // For std::min and std::max
+#include <iostream>  // for std::ostream
 
 // Enum for binary operations
 enum class BinOp {ADD, SUB, MUL, DIV};
-std::ostream& operator<<(std::ostream& os, BinOp op) {
+inline std::ostream& operator<<(std::ostream& os, BinOp op) {
     switch (op) {
         case BinOp::ADD: os << "+"; break;
         case BinOp::SUB: os << "-"; break;
@@ -21,7 +22,7 @@ std::ostream& operator<<(std::ostream& os, BinOp op) {
 
 // Enum for logical operations
 enum class LogicOp {LE, LEQ, GE, GEQ, EQ, NEQ};
-std::ostream& operator<<(std::ostream& os, LogicOp lop) {
+inline std::ostream& operator<<(std::ostream& os, LogicOp lop) {
     switch (lop) {
         case LogicOp::LE: os << "<"; break;
         case LogicOp::LEQ: os << "<="; break;
@@ -38,7 +39,7 @@ enum class NodeType {
     VARIABLE, INTEGER, PRE_CON, POST_CON, ARITHM_OP, LOGIC_OP,
     DECLARATION, ASSIGNMENT, IFELSE, WHILELOOP, SEQUENCE
 };
-std::ostream& operator<<(std::ostream& os, NodeType type) {
+inline std::ostream& operator<<(std::ostream& os, NodeType type) {
     switch (type) {
         case NodeType::VARIABLE: os << "Variable"; break;
         case NodeType::INTEGER: os << "Integer"; break;
@@ -58,10 +59,19 @@ std::ostream& operator<<(std::ostream& os, NodeType type) {
 // Interval class for range-based analysis
 class Interval {
 public:
-    int lower; // Lower bound of the interval
-    int upper; // Upper bound of the interval
+    int lower; // Lower bound
+    int upper; // Upper bound
 
+    // === Added default constructor ===
+    Interval() : lower(0), upper(0) {}
+
+    // Existing constructor
     Interval(int l, int u) : lower(l), upper(u) {}
+
+    // === operator== for comparing two Intervals ===
+    bool operator==(const Interval &other) const {
+        return (this->lower == other.lower && this->upper == other.upper);
+    }
 
     // Check if the interval contains a specific value
     bool contains(int value) const {
@@ -120,7 +130,7 @@ struct ASTNode {
 
     ASTNode() : type(NodeType::INTEGER), value(0) {}
     ASTNode(const std::string& name) : type(NodeType::VARIABLE), value(name) {}
-    ASTNode(const int num) : type(NodeType::INTEGER), value(num) {}
+    ASTNode(int num) : type(NodeType::INTEGER), value(num) {}
     ASTNode(BinOp bop, ASTNode left, ASTNode right)
         : type(NodeType::ARITHM_OP), value(bop) {
             children.push_back(left);
@@ -133,7 +143,7 @@ struct ASTNode {
     }
     ASTNode(NodeType t) : type(t) {}
     ASTNode(NodeType t, const std::string& name) : type(t), value(name) {}
-    ASTNode(NodeType t, const VType& value) : type(t), value(value) {}
+    ASTNode(NodeType t, const VType& v) : type(t), value(v) {}
 
     static void printVariant(const VType& value) {
         std::visit([](const auto& v) {

@@ -14,7 +14,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(cpp_peglib)
 
+# -------------------------------
+# Build the old interpreter (main.cpp)
+# -------------------------------
 add_executable(absint src/main.cpp)
 target_include_directories(absint PRIVATE include)
 target_compile_features(absint PRIVATE cxx_std_17)
 target_link_libraries(absint cpp_peglib)
+
+# -------------------------------
+# Build the new equational form interpreter (main2.cpp)
+# -------------------------------
+add_executable(eq_interpreter src/main2.cpp)
+target_include_directories(eq_interpreter PRIVATE include)
+target_compile_features(eq_interpreter PRIVATE cxx_std_17)
+target_link_libraries(eq_interpreter cpp_peglib)

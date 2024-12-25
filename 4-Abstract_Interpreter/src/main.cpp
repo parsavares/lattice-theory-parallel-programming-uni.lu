@@ -1,6 +1,7 @@
 #include <fstream>
 #include <sstream>
 #include <climits> // For INT32_MIN and INT32_MAX
+#include <iostream>
 
 #include "parser.hpp"
 #include "ast.hpp"
@@ -9,7 +10,6 @@
 void checkDivisionByZero(const ASTNode& node) {
     if (node.type == NodeType::ARITHM_OP && std::get<BinOp>(node.value) == BinOp::DIV) {
         const auto& denominator = node.children[1];
-
         // Check if the denominator is zero or contains zero in its range
         if (denominator.type == NodeType::INTEGER && std::get<int>(denominator.value) == 0) {
             std::cerr << "Warning: Division by zero detected!" << std::endl;
@@ -88,5 +88,7 @@ int main(int argc, char** argv) {
     // Check for overflow errors
     checkOverflow(ast);
 
+    // If you'd like, do something else. Otherwise, we are done with the old interpreter
+    std::cout << "\n[Old interpreter done.]\n\n";
     return 0;
 }
