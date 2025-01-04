@@ -109,15 +109,32 @@ namespace semantics {
             IntervalsUnion result;
 
             switch (operation) {
-                case BinOp::ADD:
+                case BinOp::ADD: {
+                    // Overflow check for addition
+                    if (L.ub() > INT_MAX - R.ub() || L.lb() < INT_MIN - R.lb()) {
+                        notifyWarn("[WARNING] Potential overflow in addition operation!");
+                    }
                     result = (L + R);
                     break;
-                case BinOp::SUB:
+                }
+                case BinOp::SUB: {
+                    // Overflow check for subtraction
+                    if (L.ub() > INT_MAX + R.lb() || L.lb() < INT_MIN + R.ub()) {
+                        notifyWarn("[WARNING] Potential overflow in subtraction operation!");
+                    }
                     result = (L - R);
-                    break;
-                case BinOp::MUL:
+                    break;                
+                }
+                case BinOp::MUL: {
+                    // Overflow check for multiplication
+                    int lmax = std::max(std::abs(L.lb()), std::abs(L.ub()));
+                    int rmax = std::max(std::abs(R.lb()), std::abs(R.ub()));
+                    if (lmax > INT_MAX / rmax) {
+                        notifyWarn("[WARNING] Potential overflow in multiplication operation!");
+                    }
                     result = (L * R);
-                    break;
+                    break;                
+                }
                 case BinOp::DIV: {
                     // If R could be zero, raise a warning or produce empty.
                     if (R == IntervalsUnion(Range(0, 0))) {
