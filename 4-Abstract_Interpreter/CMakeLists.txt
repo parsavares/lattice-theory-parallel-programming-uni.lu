@@ -16,22 +16,15 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(cpp_peglib)
 
-# ------------------------------------------------
-# Old Interpreter: absint (src/main.cpp)
-# ------------------------------------------------
 add_executable(absint
-    src/main.cpp  # The original interpreter
+    src/main.cpp
+    src/abstract_interpreter.cpp
 )
 target_include_directories(absint PRIVATE include)
 target_compile_features(absint PRIVATE cxx_std_17)
 target_link_libraries(absint PRIVATE cpp_peglib)
 
-# ------------------------------------------------
-# New Interpreter: eq_interpreter (src/abstract_fixpoint_interpreter.cpp)
-# ------------------------------------------------
-add_executable(eq_interpreter
-    src/abstract_fixpoint_interpreter.cpp  # Your new file
-)
-target_include_directories(eq_interpreter PRIVATE include)
-target_compile_features(eq_interpreter PRIVATE cxx_std_17)
-target_link_libraries(eq_interpreter PRIVATE cpp_peglib)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_definitions(absint PRIVATE DEBUG)
+    message("Debug mode enabled")
+endif()
